@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { usePages } from '../hooks/usePages'
 import { Page, PageType } from '../types'
 import clsx from 'clsx'
+import NewPageMenu from './NewPageMenu'
 
 const pageIcon = (type: PageType) => {
   if (type === 'kanban') return <Columns className="w-4 h-4" />
@@ -76,9 +77,10 @@ export default function Sidebar() {
   const { pages, loading, createPage } = usePages()
   const navigate = useNavigate()
   const rootPages = pages.filter(p => !p.parent_id)
+  const [typeMenuOpen, setTypeMenuOpen] = useState(false)
 
-  const handleNewPage = async () => {
-    const page = await createPage('note')
+  const handleNewPage = async (type: PageType) => {
+    const page = await createPage(type)
     if (page) navigate(`/page/${page.id}`)
   }
 
@@ -107,14 +109,17 @@ export default function Sidebar() {
       </div>
 
       {/* New page */}
-      <div className="px-2 py-2 border-t border-gray-200 dark:border-gray-800">
+      <div className="px-2 py-2 border-t border-gray-200 dark:border-gray-800 relative">
         <button
-          onClick={handleNewPage}
+          onClick={() => setTypeMenuOpen(m => !m)}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-notion-muted hover:text-notion-text dark:hover:text-notion-text-dark hover:bg-notion-hover dark:hover:bg-notion-hover-dark rounded transition-colors"
         >
           <Plus className="w-4 h-4" />
           New page
         </button>
+        {typeMenuOpen && (
+          <NewPageMenu onSelect={handleNewPage} onClose={() => setTypeMenuOpen(false)} />
+        )}
       </div>
     </div>
   )
