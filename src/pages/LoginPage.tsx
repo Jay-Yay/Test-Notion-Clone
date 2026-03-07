@@ -1,6 +1,16 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) navigate('/app', { replace: true })
+  }, [user, navigate])
+
   const signIn = (provider: 'google' | 'github') => {
     supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/app` } })
   }
