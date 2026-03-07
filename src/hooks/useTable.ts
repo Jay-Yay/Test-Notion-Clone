@@ -37,12 +37,14 @@ export function useTable(pageId: string) {
   }
 
   const updateCell = async (rowId: string, columnId: string, value: string) => {
-    await supabase.from('table_cells').upsert({ row_id: rowId, column_id: columnId, value }, { onConflict: 'row_id,column_id' })
+    // Optimistic update first
     setCells(prev => {
       const existing = prev.find(c => c.row_id === rowId && c.column_id === columnId)
       if (existing) return prev.map(c => c.row_id === rowId && c.column_id === columnId ? { ...c, value } : c)
       return [...prev, { id: crypto.randomUUID(), row_id: rowId, column_id: columnId, value }]
     })
+    // Then persist
+    await supabase.from('table_cells').upsert({ row_id: rowId, column_id: columnId, value }, { onConflict: 'row_id,column_id' })
   }
 
   return { columns, rows, cells, loading, addColumn, addRow, updateCell }
