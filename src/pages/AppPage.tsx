@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useCallback, useRef } from 'react'
 import AppLayout from '../components/AppLayout'
 import PageHeader from '../components/PageHeader'
+import NoteEditor from '../components/NoteEditor'
 import { usePages } from '../hooks/usePages'
 import { Page } from '../types'
 
@@ -29,9 +30,9 @@ export default function AppPage() {
     <AppLayout>
       <div className="max-w-3xl mx-auto">
         <PageHeader page={page} onUpdate={handleUpdate} />
-        <div className="px-16 text-notion-muted text-sm">
-          {page.type} editor coming soon
-        </div>
+        {page.type === 'note' && <NoteEditor pageId={page.id} />}
+      {page.type === 'kanban' && <div className="px-16 text-notion-muted text-sm">Kanban coming soon</div>}
+      {page.type === 'table' && <div className="px-16 text-notion-muted text-sm">Table coming soon</div>}
       </div>
     </AppLayout>
   )
