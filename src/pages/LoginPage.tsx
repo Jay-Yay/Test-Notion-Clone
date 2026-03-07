@@ -12,7 +12,7 @@ export default function LoginPage() {
   }, [user, navigate])
 
   const signIn = (provider: 'google' | 'github') => {
-    supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/app` } })
+    supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/auth/callback` } })
   }
 
   return (
