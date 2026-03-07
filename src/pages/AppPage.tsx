@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader'
 import NoteEditor from '../components/NoteEditor'
 import { usePages } from '../hooks/usePages'
 import { Page } from '../types'
+import KanbanBoard from '../components/KanbanBoard'
 
 export default function AppPage() {
   const { id } = useParams<{ id: string }>()
@@ -31,7 +32,7 @@ export default function AppPage() {
       <div className="max-w-3xl mx-auto">
         <PageHeader page={page} onUpdate={handleUpdate} />
         {page.type === 'note' && <NoteEditor pageId={page.id} />}
-      {page.type === 'kanban' && <div className="px-16 text-notion-muted text-sm">Kanban coming soon</div>}
+      {page.type === 'kanban' && <KanbanBoard pageId={page.id} />}
       {page.type === 'table' && <div className="px-16 text-notion-muted text-sm">Table coming soon</div>}
       </div>
     </AppLayout>
