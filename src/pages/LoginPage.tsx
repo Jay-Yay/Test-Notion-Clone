@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabase'
 
 export default function LoginPage() {
   const signIn = (provider: 'google' | 'github') => {
-    supabase.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin } })
+    supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/app` } })
   }
 
   return (
