@@ -1,11 +1,21 @@
 import { useParams } from 'react-router-dom'
+import { useCallback, useRef } from 'react'
 import AppLayout from '../components/AppLayout'
+import PageHeader from '../components/PageHeader'
 import { usePages } from '../hooks/usePages'
+import { Page } from '../types'
 
 export default function AppPage() {
   const { id } = useParams<{ id: string }>()
-  const { pages } = usePages()
+  const { pages, updatePage } = usePages()
   const page = pages.find(p => p.id === id)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleUpdate = useCallback((updates: Partial<Page>) => {
+    if (!id) return
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => updatePage(id, updates), 500)
+  }, [id, updatePage])
 
   if (!page) return (
     <AppLayout>
@@ -17,12 +27,10 @@ export default function AppPage() {
 
   return (
     <AppLayout>
-      <div className="max-w-3xl mx-auto px-16 py-12">
-        <h1 className="text-4xl font-bold text-notion-text dark:text-notion-text-dark mb-4 outline-none">
-          {page.title || 'Untitled'}
-        </h1>
-        <div className="text-notion-muted text-sm">
-          {page.type} page — editor coming soon
+      <div className="max-w-3xl mx-auto">
+        <PageHeader page={page} onUpdate={handleUpdate} />
+        <div className="px-16 text-notion-muted text-sm">
+          {page.type} editor coming soon
         </div>
       </div>
     </AppLayout>
