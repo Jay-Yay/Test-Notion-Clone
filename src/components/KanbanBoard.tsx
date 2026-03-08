@@ -6,7 +6,7 @@ import KanbanColumnComponent from './KanbanColumn'
 interface Props { pageId: string }
 
 export default function KanbanBoard({ pageId }: Props) {
-  const { columns, cards, loading, addColumn, addCard, moveCard, deleteCard, deleteColumn } = useKanban(pageId)
+  const { columns, cards, loading, addColumn, updateColumn, addCard, moveCard, deleteCard, deleteColumn } = useKanban(pageId)
   const sensors = useSensors(useSensor(PointerSensor))
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -32,6 +32,7 @@ export default function KanbanBoard({ pageId }: Props) {
               onAddCard={addCard}
               onDeleteCard={deleteCard}
               onDeleteColumn={deleteColumn}
+              onUpdateColumn={updateColumn}
             />
           ))}
           <button

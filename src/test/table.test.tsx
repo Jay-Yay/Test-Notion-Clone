@@ -8,14 +8,14 @@ vi.mock('../hooks/useTable', () => ({
     rows: [{ id: 'row1', page_id: 'p1', position: 0 }],
     cells: [{ id: 'cell1', row_id: 'row1', column_id: 'col1', value: 'Alice' }],
     loading: false,
-    addRow: vi.fn(), addColumn: vi.fn(), updateCell: vi.fn(),
+    addRow: vi.fn(), addColumn: vi.fn(), updateCell: vi.fn(), updateColumn: vi.fn(),
   }),
 }))
 
 describe('TableView', () => {
   it('renders column headers and cell values', () => {
     render(<TableView pageId="p1" />)
-    expect(screen.getByText('Name')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('Name')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Alice')).toBeInTheDocument()
   })
 })

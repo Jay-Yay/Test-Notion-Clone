@@ -31,12 +31,27 @@ export function useKanban(pageId: string) {
   }, [fetch, pageId])
 
   const addColumn = async () => {
-    await supabase.from('kanban_columns').insert({ page_id: pageId, title: 'New Column', position: columns.length })
+    const tempId = crypto.randomUUID()
+    const position = columns.length
+    setColumns(prev => [...prev, { id: tempId, page_id: pageId, title: 'New Column', position }])
+    const { data } = await supabase.from('kanban_columns').insert({ page_id: pageId, title: 'New Column', position }).select().single()
+    if (data) setColumns(prev => prev.map(c => c.id === tempId ? data : c))
+    else fetch()
+  }
+
+  const updateColumn = async (columnId: string, title: string) => {
+    setColumns(prev => prev.map(c => c.id === columnId ? { ...c, title } : c))
+    await supabase.from('kanban_columns').update({ title }).eq('id', columnId)
   }
 
   const addCard = async (columnId: string) => {
     const colCards = cards.filter(c => c.column_id === columnId)
-    await supabase.from('kanban_cards').insert({ column_id: columnId, title: 'Untitled Card', position: colCards.length })
+    const tempId = crypto.randomUUID()
+    const position = colCards.length
+    setCards(prev => [...prev, { id: tempId, column_id: columnId, title: 'Untitled Card', position }])
+    const { data } = await supabase.from('kanban_cards').insert({ column_id: columnId, title: 'Untitled Card', position }).select().single()
+    if (data) setCards(prev => prev.map(c => c.id === tempId ? data : c))
+    else fetch()
   }
 
   const moveCard = async (cardId: string, newColumnId: string, newPosition: number) => {
@@ -44,12 +59,14 @@ export function useKanban(pageId: string) {
   }
 
   const deleteCard = async (cardId: string) => {
+    setCards(prev => prev.filter(c => c.id !== cardId))
     await supabase.from('kanban_cards').delete().eq('id', cardId)
   }
 
   const deleteColumn = async (columnId: string) => {
+    setColumns(prev => prev.filter(c => c.id !== columnId))
     await supabase.from('kanban_columns').delete().eq('id', columnId)
   }
 
-  return { columns, cards, loading, addColumn, addCard, moveCard, deleteCard, deleteColumn }
+  return { columns, cards, loading, addColumn, updateColumn, addCard, moveCard, deleteCard, deleteColumn }
 }

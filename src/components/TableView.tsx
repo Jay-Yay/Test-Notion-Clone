@@ -4,7 +4,7 @@ import { useTable } from '../hooks/useTable'
 interface Props { pageId: string }
 
 export default function TableView({ pageId }: Props) {
-  const { columns, rows, cells, loading, addColumn, addRow, updateCell } = useTable(pageId)
+  const { columns, rows, cells, loading, addColumn, addRow, updateColumn, updateCell } = useTable(pageId)
 
   const getCell = (rowId: string, colId: string) =>
     cells.find(c => c.row_id === rowId && c.column_id === colId)?.value ?? ''
@@ -17,8 +17,12 @@ export default function TableView({ pageId }: Props) {
         <thead>
           <tr>
             {columns.map(col => (
-              <th key={col.id} className="border border-gray-200 dark:border-gray-700 px-3 py-2 text-left font-medium bg-notion-sidebar dark:bg-notion-sidebar-dark min-w-[160px]">
-                {col.name}
+              <th key={col.id} className="border border-gray-200 dark:border-gray-700 px-0 py-0 text-left font-medium bg-notion-sidebar dark:bg-notion-sidebar-dark min-w-[160px]">
+                <input
+                  className="w-full px-3 py-2 bg-transparent outline-none font-medium focus:bg-blue-50 dark:focus:bg-blue-900/10"
+                  value={col.name}
+                  onChange={e => updateColumn(col.id, e.target.value)}
+                />
               </th>
             ))}
             <th className="border border-gray-200 dark:border-gray-700 px-2 py-2">
