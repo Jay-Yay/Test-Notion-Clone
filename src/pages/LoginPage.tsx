@@ -29,8 +29,9 @@ export default function LoginPage() {
     setMessage(null)
     setLoading(true)
     if (mode === 'signup') {
-      const { error } = await supabase.auth.signUp({ email, password })
+      const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) setError(error.message)
+      else if (data.session) navigate('/app', { replace: true })
       else setMessage('Check your email for a confirmation link.')
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
