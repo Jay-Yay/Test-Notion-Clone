@@ -17,12 +17,23 @@ export default function AuthCallback() {
       return
     }
 
+    // Wait for auth state change instead of navigating immediately after exchange
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        subscription.unsubscribe()
+        navigate('/app', { replace: true })
+      }
+    })
+
     if (code) {
       supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-        if (error) setError(error.message)
-        else navigate('/app', { replace: true })
+        if (error) {
+          subscription.unsubscribe()
+          setError(error.message)
+        }
       })
     } else {
+      subscription.unsubscribe()
       navigate('/app', { replace: true })
     }
   }, [navigate])
