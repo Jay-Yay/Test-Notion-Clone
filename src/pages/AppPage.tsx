@@ -10,7 +10,7 @@ import TableView from '../components/TableView'
 
 export default function AppPage() {
   const { id } = useParams<{ id: string }>()
-  const { pages, updatePage } = usePages()
+  const { pages, loading, updatePage } = usePages()
   const page = pages.find(p => p.id === id)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -19,6 +19,12 @@ export default function AppPage() {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => updatePage(id, updates), 500)
   }, [id, updatePage])
+
+  if (loading) return (
+    <AppLayout>
+      <div className="flex items-center justify-center h-full text-notion-muted">Loading…</div>
+    </AppLayout>
+  )
 
   if (!page) return (
     <AppLayout>
